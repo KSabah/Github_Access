@@ -16,14 +16,11 @@ rl.question('What user would you like info on? ',(answer) =>
   console.log(max);
   console.log(reset); (UTC epoch seconds)
   */
-
   ghuser.repos((function(err, data, headers) {
-    console.log("data: " + JSON.stringify(data));
-    /*Uncomment to view errors and headers
-    console.log("error: " + err);
-    console.log("headers:" + headers);
-    */
-});
+    for(var name in data) {
+        if(data.hasOwnProperty(name))
+            console.log(data[name].name);
+    }
   }));
   rl.close();
 });
