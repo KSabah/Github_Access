@@ -10,6 +10,12 @@ const rl = readline.createInterface({
 rl.question('What user would you like info on? ',(answer) =>
 {
   var ghuser = client.user(answer);
+  /* Uncomment to show rate limit details
+  client.limit(function (err, left, max, reset) {
+  console.log(left);
+  console.log(max);
+  console.log(reset); (UTC epoch seconds)
+  */
 
   ghuser.repos((function(err, data, headers) {
     console.log("data: " + JSON.stringify(data));
@@ -17,6 +23,7 @@ rl.question('What user would you like info on? ',(answer) =>
     console.log("error: " + err);
     console.log("headers:" + headers);
     */
+});
   }));
   rl.close();
 });
