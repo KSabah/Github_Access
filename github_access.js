@@ -17,24 +17,29 @@ app.get('/', function (req, res) {
 })
 
 app.post('/', function (req, res) {
+  var array = [];
+  var repos = [];
   let username = req.body.username;
   var ghuser = client.user(username);
   ghuser.repos((function(err, data, headers) {
     for(var i in data) {
       if(data.hasOwnProperty(i)) {
-        var repoName = data[i].name;
-        let repos = getCommits(username, repoName);
-        repos.then(function(result) {
-          res.render('index', {repos: result, error: null});
-        })
+        array.push(data[i].name);
       }
     }
+    repos = getCommits(username, array);
+    repos.then(function(result) {
+      res.render('index', {repos: result, error: null});
+    })
   }));
 })
 
-async function getCommits (username, repoName) {
-  var res = await client.getAsync('/repos/'+username+'/'
-                  +repoName+'/contributors', {});
-  var data = repoName+' : '+ res[1][0].contributions;
+async function getCommits (username, repos) {
+  var data = []
+  for (var i = 0; i < repos.length; i++){
+    var res = await client.getAsync('/repos/'+username+'/'
+                    +repos[i]+'/contributors', {});
+    data[i] = repos[i]+' : '+ res[1][0].contributions;
+  }
   return data;
 }
