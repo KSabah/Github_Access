@@ -1,26 +1,36 @@
+const express = require('express')
+const app = express()
+const bodyParser = require('body-parser');
+
+app.use(express.static('public'));
+app.set('view engine', 'ejs')
+app.use(bodyParser.urlencoded({ extended: true }));
+
 var github = require('octonode');
 var client = github.client();
-const readline = require('readline');
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
+
+app.listen(3000, function () {
 });
 
-rl.question('What user would you like info on? ',(answer) =>
-{
-  var ghuser = client.user(answer);
+app.post('/', function (req, res) {
+  let username = req.body.username;
+  var ghuser = client.user(username);
   ghuser.repos((function(err, data, headers) {
     for(var i in data) {
-      if(data.hasOwnProperty(i)){
+      if(data.hasOwnProperty(i)) {
         var repoName = data[i].name;
-        getCommits(answer, repoName);
+        var text = getCommits(username, repoName);
+        text.then(function(result) {
+        console.log(result) //will log results.
+        })
       }
-   }
- }));
-rl.close();
-});
+    }
+  }));
+})
 
-async function getCommits (answer, repoName) {
-  var res = await client.getAsync('/repos/'+answer+'/'+repoName+'/contributors', {});
-  console.log(repoName+' : '+ res[1][0].contributions)
+async function getCommits (username, repoName) {
+  var res = await client.getAsync('/repos/'+username+'/'
+                  +repoName+'/contributors', {});
+  var data = repoName+' : '+ res[1][0].contributions;
+  return data;
 }
