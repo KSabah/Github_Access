@@ -7,10 +7,14 @@ app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var github = require('octonode');
-var client = github.client();
+var client = github.client('b1b83ad97df0ab2d1a2ec02a90a3194440ef6d72');
 
 app.listen(3000, function () {
 });
+
+app.get('/', function (req, res) {
+  res.render('index', {repos: null, error: null});
+})
 
 app.post('/', function (req, res) {
   let username = req.body.username;
@@ -19,9 +23,9 @@ app.post('/', function (req, res) {
     for(var i in data) {
       if(data.hasOwnProperty(i)) {
         var repoName = data[i].name;
-        var text = getCommits(username, repoName);
-        text.then(function(result) {
-        console.log(result) //will log results.
+        let repos = getCommits(username, repoName);
+        repos.then(function(result) {
+          res.render('index', {repos: result, error: null});
         })
       }
     }
