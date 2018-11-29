@@ -1,0 +1,31 @@
+{
+  "name": "github_access",
+  "version": "1.0.0",
+  "description": "A simple application that shows Github users' repositories and their commits to them",
+  "main": "github_access.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "got": "^7.1.0",
+    "http-server": "^0.11.1",
+    "octonode": "^0.9.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KSabah/Github_Access.git"
+  },
+  "keywords": [
+    "Github"
+  ],
+  "author": "Sabah Khan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KSabah/Github_Access/issues"
+  },
+  "homepage": "https://github.com/KSabah/Github_Access#readme"
+}
