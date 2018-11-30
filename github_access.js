@@ -9,7 +9,7 @@ app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var github = require('octonode');
-var client = github.client('33efaa67fb14e47e208ef8f3b9e0829979e83a99');
+var client = github.client();
 
 var fs = require('fs');
 
