@@ -2,12 +2,16 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser');
 
+const bubbleChart = require('./bubblechart');
+
 app.use(express.static('public'));
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var github = require('octonode');
-var client = github.client();
+var client = github.client('33efaa67fb14e47e208ef8f3b9e0829979e83a99');
+
+var fs = require('fs');
 
 app.listen(3000, function () {
 });
@@ -29,17 +33,24 @@ app.post('/', function (req, res) {
     }
     repos = getCommits(username, array);
     repos.then(function(result) {
+
       res.render('index', {repos: result, error: null});
     })
   }));
 })
 
 async function getCommits (username, repos) {
-  var data = []
+  var data = [];
   for (var i = 0; i < repos.length; i++){
     var res = await client.getAsync('/repos/'+username+'/'
                     +repos[i]+'/contributors', {});
-    data[i] = repos[i]+' : '+ res[1][0].contributions;
+    data[i] = repos[i]+':'+ res[1][0].contributions;
+  }
+  fs.appendFileSync('./data.csv','name,contributions\n');
+  var parsedData = [];
+  for (var i = 0; i < data.length; i++){
+    parsedData = data[i].split(":");
+    fs.appendFileSync('./data.csv',parsedData[0]+','+parsedData[1]+'\n');
   }
   return data;
 }
