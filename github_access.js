@@ -43,6 +43,7 @@ async function getCommits (username, repos) {
                     +repos[i]+'/contributors', {});
     data[i] = repos[i]+':'+ res[1][0].contributions;
   }
+<<<<<<< HEAD
 
   fs.stat('./'+username+'-data.csv', function(err, stats) {
   if(err){
@@ -57,6 +58,13 @@ async function getCommits (username, repos) {
         break;
     }
     return data;
+=======
+  fs.appendFileSync('./'+username+'-data.csv','name,contributions\n');
+  var parsedData = [];
+  for (var i = 0; i < data.length; i++){
+    parsedData = data[i].split(":");
+    fs.appendFileSync('./'+username+'-data.csv',parsedData[0]+','+parsedData[1]+'\n');
+>>>>>>> 0e0cc22bbdea4f9867e9920a3ae06418466aee67
   }
 
   if (stats.isDirectory())
