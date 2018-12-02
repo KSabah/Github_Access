@@ -9,7 +9,8 @@
     "express": "^4.16.4",
     "got": "^7.1.0",
     "http-server": "^0.11.1",
-    "octonode": "^0.9.5"
+    "octonode": "^0.9.5",
+    "d3":"5"
   },
   "devDependencies": {},
   "scripts": {
