@@ -6,6 +6,9 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-color.v1.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
   </head>
   <body>
     <div class="container">
@@ -15,18 +18,18 @@
           <input type="submit" class="ghost-button" value="Get info">
         </form>
     <script>
-    async function run(){
-      var username = document.getElementsByName("username")[0].value;
-      var dataset = {"children":[]};
-      var i = 0;
-      await d3.csv("Ksabah-data.csv", function(d){ return {name : d.name,
-      contributions : +d.contributions}},
-      function(rows) {
-        dataset.children[i] = rows;
-        i++
-     })
+      async function run(){
+        var username = document.getElementsByName("username")[0].value;
+        var dataset = {"children":[]};
+        var i = 0;
+        await d3.csv("data.csv", function(d){ return {name : d.name,
+          contributions : +d.contributions}},
+          function(rows) {
+            dataset.children[i] = rows;
+            i++
+          })
         var diameter = 600;
-        var color = d3.scaleOrdinal(d3.schemeCategory20);
+        var color = d3.scaleOrdinal(d3.schemeSpectral[9]);
 
         var bubble = d3.pack(dataset)
             .size([diameter, diameter])
@@ -55,7 +58,8 @@
 
         node.append("title")
             .text(function(d) {
-                return d.name + ": " + d.contributions;
+              console.log(d)
+                return d.data.name + ": " + d.data.contributions;
             });
 
         node.append("circle")
@@ -70,7 +74,7 @@
             .attr("dy", ".2em")
             .style("text-anchor", "middle")
             .text(function(d) {
-                return  d.data.name.substring(0, d.r / 3);
+                return d.data.name.substring(0, d.r / 3);
             })
             .attr("font-family", "sans-serif")
             .attr("font-size", function(d){
@@ -92,13 +96,10 @@
 
         d3.select(self.frameElement)
             .style("height", diameter + "px");
-
-
-    }
-run();
-
+          }
+        run();
     </script>
-      </fieldset>
+    </fieldset>
     </div>
   </body>
 </html>
