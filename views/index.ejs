@@ -5,6 +5,7 @@
     <title>Test</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
   </head>
   <body>
     <div class="container">
@@ -13,12 +14,85 @@
           <input name="username" type="text" class="ghost-input" placeholder="Enter a Github Username" required>
           <input type="submit" class="ghost-button" value="Get info">
         </form>
-        <% if(repos !== null){ %>
-          <p><%= repos %></p>
-        <% } %>
-        <% if(error !== null){ %>
-          <p><%= error %></p>
-        <% } %>
+    <script>
+    var username = document.getElementsByName("username")[0].value;
+    var dataset = {"children":[]};
+    var i = 0;
+    d3.csv("Ksabah-data.csv", function(d){ return {name : d.name,
+    contributions : +d.contributions}},
+    function(rows) {
+      dataset.children[i] = rows;
+      i++
+
+      var diameter = 600;
+      var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+      var bubble = d3.pack(dataset)
+          .size([diameter, diameter])
+          .padding(1.5);
+
+      var svg = d3.select("body")
+          .append("svg")
+          .attr("width", diameter)
+          .attr("height", diameter)
+          .attr("class", "bubble");
+
+      var nodes = d3.hierarchy(dataset)
+          .sum(function(d) { return d.contributions; });
+
+      var node = svg.selectAll(".node")
+          .data(bubble(nodes).descendants())
+          .enter()
+          .filter(function(d){
+              return  !d.children
+          })
+          .append("g")
+          .attr("class", "node")
+          .attr("transform", function(d) {
+              return "translate(" + d.x + "," + d.y + ")";
+          });
+
+      node.append("title")
+          .text(function(d) {
+              return d.name + ": " + d.contributions;
+          });
+
+      node.append("circle")
+          .attr("r", function(d) {
+              return d.r;
+          })
+          .style("fill", function(d,i) {
+              return color(i);
+          });
+
+      node.append("text")
+          .attr("dy", ".2em")
+          .style("text-anchor", "middle")
+          .text(function(d) {
+              return  d.data.name.substring(0, d.r / 3);
+          })
+          .attr("font-family", "sans-serif")
+          .attr("font-size", function(d){
+              return d.r/5;
+          })
+          .attr("fill", "white");
+
+      node.append("text")
+          .attr("dy", "1.3em")
+          .style("text-anchor", "middle")
+          .text(function(d) {
+              return d.data.contributions;
+          })
+          .attr("font-family",  "Gill Sans", "Gill Sans MT")
+          .attr("font-size", function(d){
+              return d.r/5;
+          })
+          .attr("fill", "white");
+
+      d3.select(self.frameElement)
+          .style("height", diameter + "px");
+   })
+    </script>
       </fieldset>
     </div>
   </body>
