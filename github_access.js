@@ -15,7 +15,7 @@ app.listen(3000, function () {
 });
 
 app.get('/', function (req, res) {
-  res.render('index', {repos: null});
+  res.render('index');
 })
 
 app.post('/', function (req, res) {
@@ -30,44 +30,30 @@ app.post('/', function (req, res) {
       }
     }
     repos = getCommits(username, array);
-    repos.then(function(result) {
-      res.render('index', {repos: result});
-    })
+    res.render('index');
   }));
 })
 
 async function getCommits (username, repos) {
   var data = [];
+  var parsedData = [];
   for (var i = 0; i < repos.length; i++){
     var res = await client.getAsync('/repos/'+username+'/'
                     +repos[i]+'/contributors', {});
     data[i] = repos[i]+':'+ res[1][0].contributions;
   }
-<<<<<<< HEAD
-
-  fs.stat('./'+username+'-data.csv', function(err, stats) {
-  if(err){
-    switch(err.code){
-      case 'ENOENT':
-        fs.appendFileSync('./'+username+'-data.csv','name,contributions\n');
-        var parsedData = [];
-        for (var i = 0; i < data.length; i++){
-          parsedData = data[i].split(":");
-          fs.appendFileSync('./'+username+'-data.csv',parsedData[0]+','+parsedData[1]+'\n');
-        }
-        break;
+  if (fs.existsSync('./public/data.csv')){
+    fs.appendFileSync('./public/data.csv','name,contributions\n');
+    for (var i = 0; i < data.length; i++){
+       parsedData = data[i].split(":");
+       fs.appendFileSync('./public/data.csv',parsedData[0]+','+parsedData[1]+'\n');
     }
-    return data;
-=======
-  fs.appendFileSync('./'+username+'-data.csv','name,contributions\n');
-  var parsedData = [];
-  for (var i = 0; i < data.length; i++){
-    parsedData = data[i].split(":");
-    fs.appendFileSync('./'+username+'-data.csv',parsedData[0]+','+parsedData[1]+'\n');
->>>>>>> 0e0cc22bbdea4f9867e9920a3ae06418466aee67
   }
-
-  if (stats.isDirectory())
-    return data;
-  });
+  else {
+    fs.appendFileSync('./public/data.csv','name,contributions\n');
+      for (var i = 0; i < data.length; i++){
+         parsedData = data[i].split(":");
+         fs.appendFileSync('./public/data.csv',parsedData[0]+','+parsedData[1]+'\n');
+    }
+  }
 }
