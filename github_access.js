@@ -15,7 +15,7 @@ app.listen(3000, function () {
 });
 
 app.get('/', function (req, res) {
-  res.render('index');
+  res.render('index', {repos:null});
 })
 
 app.post('/', function (req, res) {
@@ -30,6 +30,7 @@ app.post('/', function (req, res) {
       }
     }
     repos = getCommits(username, array);
+
     res.render('index');
   }));
 })
@@ -37,20 +38,24 @@ app.post('/', function (req, res) {
 async function getCommits (username, repos) {
   var data = [];
   var parsedData = [];
+console.log(repos.length)
   for (var i = 0; i < repos.length; i++){
     var res = await client.getAsync('/repos/'+username+'/'
                     +repos[i]+'/contributors', {});
     data[i] = repos[i]+':'+ res[1][0].contributions;
   }
+
   if (fs.existsSync('./public/data.csv')){
-    fs.appendFileSync('./public/data.csv','name,contributions\n');
+    fs.truncateSync('./public/data.csv',[0]);
+    fs.writeFileSync('./public/data.csv','name,contributions\n');
+  //  console.log(data.length)
     for (var i = 0; i < data.length; i++){
        parsedData = data[i].split(":");
        fs.appendFileSync('./public/data.csv',parsedData[0]+','+parsedData[1]+'\n');
     }
   }
   else {
-    fs.appendFileSync('./public/data.csv','name,contributions\n');
+    fs.writeFileSync('./public/data.csv','name,contributions\n');
       for (var i = 0; i < data.length; i++){
          parsedData = data[i].split(":");
          fs.appendFileSync('./public/data.csv',parsedData[0]+','+parsedData[1]+'\n');
